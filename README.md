@@ -23,10 +23,12 @@ OPTIONS
 COMPILE AND RUN
 ---------------
 
-`cd las-header-parser/src`
-`make clean`
-`make`
-`./lh_parse -f example-01.las`
+```bash
+cd las-header-parser/src
+make clean
+make
+./lh_parse -f example-01.las
+```
 
 BUGS
 ----
