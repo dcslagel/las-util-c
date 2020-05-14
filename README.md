@@ -6,13 +6,13 @@ Las-Header-Parser - A Log Ascii Standard header meta-data parser in C
 SYNOPSIS
 --------
 
-`lhparse -f` *.qif
+`lh_parse -f` <sample.las>
 
 DESCRIPTION
 -----------
-Caution: This is very beta software!
+Caution: This is very Alpha software!
 
-The goal of 'lhparse` is to parse LAS file header meta-data lines. 
+The goal of 'lh_parse` is to parse LAS file header meta-data lines.
 
 OPTIONS
 -------
@@ -23,18 +23,18 @@ OPTIONS
 COMPILE AND RUN
 ---------------
 
-`cd las-header-line-parser/src`  
+`cd las-header-parser/src`
 `make clean`
-`make`  
-`./lhparse -f example-01.las`  
+`make`
+`./lh_parse -f example-01.las`
 
 BUGS
 ----
 
-- Functionality is very basic.
+- Functionality is non-existent. It will be added in future iterations.
 
 
 COPYRIGHT
 ------
 
-Copyright (c) 2020 DC Slagel
+Copyright (c) 2020 DC Slagel and contributers
