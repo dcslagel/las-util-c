@@ -27,13 +27,27 @@ COMPILE AND RUN
 cd las-header-parser/src
 make clean
 make
-./lh_parse -f example-01.las
+./lh_parse -f header_line.las
+```
+
+This will output:
+
+```
+$ ./lh_parser -f header_line.las
+filename: [header_line.las]
+#----------------------------------------#
+Record: [ BHT .DEGC         35.5000:   BOTTOM HOLE TEMPERATURE]
+Record-Size:  [53]
+Mnemonic: [BHT ]
+#----------------------------------------#
 ```
 
 BUGS
 ----
 
-- Functionality is non-existent. It will be added in future iterations.
+- Functionality is severly limited to reading the mnemonic_name (first field)
+  from a las file containing only one meta data line.  Additional functionality
+  will be added in future iterations.
 
 
 COPYRIGHT
