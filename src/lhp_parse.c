@@ -23,6 +23,7 @@ static char *lhp_section_type = NULL;
 static char *lhp_field_buffer = NULL;
 static char *mnemonic_name = NULL;
 static char *unit = NULL;
+static char *value = NULL;
 
 struct record_fields {
     char *mnemonic_name;
@@ -128,8 +129,44 @@ void read_las_file(const char *lhp_filename)
           unit_idx++;
         }
 
+        // Move line_idx past the ' ' delimiter.
+        line_idx++;
+
         unit = malloc(strlen(lhp_field_buffer) + 1);
         strncpy(unit, lhp_field_buffer, strlen(lhp_field_buffer) + 1);
+
+        // ---------------------------------------------------------------------
+        // Parse value.
+        // ---------------------------------------------------------------------
+
+        // Clear lhp_field_buffer.
+        memset(lhp_field_buffer,0,strlen(lhp_field_buffer));
+
+        size_t value_idx = 0;
+
+        // Move past spaces at the beginning of the value field.
+        while (line[line_idx] == ' ') {
+          printf("LINE-IDX: [%zu]\n", line_idx);
+          line_idx++;
+        }
+
+        // Save value field into buffer
+        while (line[line_idx] != ':') {
+          lhp_field_buffer[value_idx] = line[line_idx];
+          line_idx++;
+          value_idx++;
+        }
+
+        // Move line_idx past the ':' delimiter.
+        line_idx++;
+
+        value = malloc(value_idx);
+        strncpy(value, lhp_field_buffer, value_idx);
+        value[value_idx] = '\0';
+
+        // ---------------------------------------------------------------------
+        // Display fields
+        // ---------------------------------------------------------------------
 
         printf("#----------------------------------------#\n");
         printf("Record: [%s]\n", line);
@@ -138,8 +175,10 @@ void read_las_file(const char *lhp_filename)
         printf("Record-Size:  [%zu]\n", sizeof(line));
         printf("Mnemonic: [%zu]\n", sizeof(mnemonic_name));
         printf("Mnemonic: [%s]\n", mnemonic_name);
-        printf("Unit: [%zu]\n", sizeof(unit));
+        printf("Unit: [%zu]\n", strlen(unit));
         printf("Unit: [%s]\n", unit);
+        printf("Value: [%zu]\n", strlen(value));
+        printf("Value: [%s]\n", value);
         printf("#----------------------------------------#\n");
         return;
 
