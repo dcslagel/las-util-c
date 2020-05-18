@@ -10,7 +10,7 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-Caution: This is very Alpha software!
+Caution: This is Alpha software!
 
 The goal of 'lh_parse` is to parse LAS file header meta-data lines.
 
@@ -38,16 +38,24 @@ filename: [header_line.las]
 #----------------------------------------#
 Record: [ BHT .DEGC         35.5000:   BOTTOM HOLE TEMPERATURE]
 Record-Size:  [53]
-Mnemonic: [BHT ]
+Record-Size:  [1024]
+Mnemonic: [8]
+Mnemonic: [BHT]
+Unit: [4]
+Unit: [DEGC]
+Value: [7]
+Value: [35.5000]
+Desc: [23]
+Desc: [BOTTOM HOLE TEMPERATURE]
 #----------------------------------------#
 ```
 
 BUGS
 ----
 
-- Functionality is severly limited to reading the mnemonic_name (first field)
-  from a las file containing only one meta data line.  Additional functionality
-  will be added in future iterations.
+- Functionality is severly limited to reading the fields from a las file
+  containing only one meta data line.  Additional functionality will be added
+  in future iterations.
 
 
 COPYRIGHT
