@@ -24,6 +24,7 @@ static char *lhp_field_buffer = NULL;
 static char *mnemonic_name = NULL;
 static char *unit = NULL;
 static char *value = NULL;
+static char *desc = NULL;
 
 struct record_fields {
     char *mnemonic_name;
@@ -146,7 +147,6 @@ void read_las_file(const char *lhp_filename)
 
         // Move past spaces at the beginning of the value field.
         while (line[line_idx] == ' ') {
-          printf("LINE-IDX: [%zu]\n", line_idx);
           line_idx++;
         }
 
@@ -165,6 +165,34 @@ void read_las_file(const char *lhp_filename)
         value[value_idx] = '\0';
 
         // ---------------------------------------------------------------------
+        // Parse description.
+        // ---------------------------------------------------------------------
+
+        // Clear lhp_field_buffer.
+        memset(lhp_field_buffer,0,strlen(lhp_field_buffer));
+
+        size_t desc_idx = 0;
+
+        // Move past spaces at the beginning of the desc field.
+        while (line[line_idx] == ' ') {
+          line_idx++;
+        }
+
+        // Save desc field into buffer
+        while (line_idx <= strlen(line)) {
+          lhp_field_buffer[desc_idx] = line[line_idx];
+          line_idx++;
+          desc_idx++;
+        }
+
+        // Move line_idx past the ':' delimiter.
+        line_idx++;
+
+        desc = malloc(desc_idx);
+        strncpy(desc, lhp_field_buffer, desc_idx);
+        desc[desc_idx] = '\0';
+
+        // ---------------------------------------------------------------------
         // Display fields
         // ---------------------------------------------------------------------
 
@@ -179,36 +207,11 @@ void read_las_file(const char *lhp_filename)
         printf("Unit: [%s]\n", unit);
         printf("Value: [%zu]\n", strlen(value));
         printf("Value: [%s]\n", value);
+        printf("Desc: [%zu]\n", strlen(desc));
+        printf("Desc: [%s]\n", desc);
         printf("#----------------------------------------#\n");
+
         return;
-
-        /*
-        // Parse entry fields
-        field_id = line[0];
-        line_iter = line;
-        line_iter++;
-
-        switch (field_id)
-        {
-            case 'D':
-                parse_mnemonic_name(line_iter, rec_idx);
-                break;
-            case 'U':
-                parse_unit(line_iter, rec_idx);
-                break;
-            case 'T':
-                parse_value(line_iter, rec_idx);
-                break;
-            case 'N':
-                parse_desc(line_iter, rec_idx);
-                break;
-            default:
-                break;
-        }
-
-        // clear line for next input
-        line[0] = '\0';
-        */
     }
 
     if (fclose(fp) == EOF) {

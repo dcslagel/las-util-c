@@ -8,6 +8,7 @@ RM=rm -fv
 SRCS=*.c
 OBJS=$(subst .c,.o,$(SRCS))
 PRG=lh_parser
+LAS_FILE=header_line.las
 
 all: *.c
 	$(CC) $(CFLAGS) *.c -o $(PRG)
@@ -25,4 +26,4 @@ clean:
 
 .PHONEY: run
 run:
-	./$(PRG)
+	./$(PRG) -f header_line.las
