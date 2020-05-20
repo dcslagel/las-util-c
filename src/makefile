@@ -5,24 +5,26 @@ DEBUG=-g -O0
 # f: force removal, v: verbose (list files removed)
 RM=rm -fv
 
-SRCS=*.c
+SRCS=lhp_args.c lhp_parse.c main.c
 OBJS=$(subst .c,.o,$(SRCS))
 PRG=lh_parser
 LAS_FILE=header_line.las
 
-all: *.c
-	$(CC) $(CFLAGS) *.c -o $(PRG)
+echo: $(SRCS)
+	@echo $(SRCS)
 
-debug: *.c
-	$(CC) $(CFLAGS) $(DEBUG) *.c -o $(PRG)
+lh_parser: $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@
 
+debug: $(OBJS)
+	$(CC) $(CFLAGS) $(DEBUG) $^ -o $(PRG)
 
-alt: *.c
-	$(CC) $(CFLAGS) alt1.c -o alt1.o
+tests: test_main.c
+	$(CC) $(CFLAGS) test_main.c -o test_main
 
 .PHONEY: clean
 clean:
-	$(RM) $(OBJS) $(PRG)
+	$(RM) $(OBJS) $(PRG) test_main
 
 .PHONEY: run
 run:
