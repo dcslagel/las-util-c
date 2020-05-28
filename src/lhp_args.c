@@ -9,7 +9,7 @@
 
 #include <stdio.h>   // perror()
 #include <stdlib.h>  // malloc(), free()
-#include <strings.h> // strlen(), strncpy()
+#include <strings.h> // strdup()
 #include <getopt.h>  // getopt(), optarg
 
 #include "lhp_args.h"
@@ -27,26 +27,15 @@ int arg_parse(int argc, char *argv[])
         switch (ch) 
         {
             case 'f':
-                filename_to_parse = malloc(strlen(optarg + 1));
-                if (filename_to_parse == NULL)
-                {
-                    perror("malloc");
-                    return 1;
-                }
-                // This seems to work but not sure why.
-                // strncpy(filename_to_parse, optarg, strlen(optarg) + 1);
-                
-                // This seems to be the standard way
-                strncpy(filename_to_parse, optarg, strlen(optarg));
-                filename_to_parse[strlen(filename_to_parse) - 1] = '\0';
-                break;
+              filename_to_parse = strdup(optarg);
+              break;
         }
     }
 
     return 0;
 }
 
-char *get_filename_arg(void)
+char * get_filename_arg(void)
 {
     return filename_to_parse;
 }
