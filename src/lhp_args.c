@@ -27,6 +27,20 @@ int arg_parse(int argc, char *argv[])
         switch (ch) 
         {
             case 'f':
+              /* NOTES: strdup is analogous to:
+              ptr2 = malloc(strlen(ptr1)+1);
+              strcpy(ptr2,ptr1);
+
+              or 
+
+							char *strdup(const char *src) {
+								size_t len = strlen(src) + 1;
+								char *s = malloc(len);
+								if (s == NULL)
+										return NULL;
+								return (char *)memcpy(s, src, len);
+							}
+              */
               filename_to_parse = strdup(optarg);
               break;
         }
