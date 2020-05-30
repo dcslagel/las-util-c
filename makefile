@@ -52,7 +52,7 @@ debug: $(OBJS)
 	$(CC) $(CFLAGS) $(DEBUG) $^ -o $(PRG)
 
 run:
-	./$(PRG) -f $(DIR_DATA)/header_line.las
+	./$(PRG) -f $(DIR_DATA)/3.0/ver_line_30.las
 
 test: $(DIR_TEST)/test_main
 
