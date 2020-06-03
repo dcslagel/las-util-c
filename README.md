@@ -1,7 +1,7 @@
 
 NAME
 ----
-Las-Header-Parser - A Log Ascii Standard header meta-data parser in C
+Las-Header-Parser - A Log Ascii Standard 3.0 header meta-data parser in C
 
 SYNOPSIS
 --------
@@ -12,7 +12,7 @@ DESCRIPTION
 -----------
 Caution: This is Alpha software!
 
-The goal of 'lh_parse` is to parse LAS file header meta-data lines.
+The current goal of 'lh_parse` is to parse LAS 3.0 file header meta-data lines.
 
 OPTIONS
 -------
@@ -27,28 +27,37 @@ COMPILE AND RUN
 cd las-header-parser/src
 make clean
 make
-./lh_parse -f header_line.las
+make install
+bin/lh_parser -f examples/3.0/ver_line_30.las
 ```
 
 This will output:
 
 ```
-$ ./lh_parser -f header_line.las
-filename: [header_line.las]
+bin/lh_parser -f examples/3.0/ver_line_30.las 
+filename: [examples/3.0/ver_line_30.las]
 #----------------------------------------#
-Record: [ BHT .DEGC         35.5000:   BOTTOM HOLE TEMPERATURE]
-Record-Size:  [53]
+Record: [VERS.                          3.0 : CWLS LOG ASCII STANDARD -VERSION 3.0]
+Record-Size:  [73]
 Record-Size:  [1024]
 Mnemonic: [8]
-Mnemonic: [BHT]
-Unit: [4]
-Unit: [DEGC]
-Value: [7]
-Value: [35.5000]
-Desc: [23]
-Desc: [BOTTOM HOLE TEMPERATURE]
+Mnemonic: [VERS]
+Unit: [0]
+Unit: []
+Value: [4]
+Value: [3.0 ]
+Desc: [36]
+Desc: [CWLS LOG ASCII STANDARD -VERSION 3.0]
 #----------------------------------------#
 ```
+PROJECT
+-------
+
+las-parser-c's project road-map is managed in github milestones at:
+- https://github.com/dcslagel/las-header-parser-c/milestones
+
+To request a feature or report a bug create an issue at:
+- https://github.com/dcslagel/las-header-parser-c/issues
 
 BUGS
 ----
@@ -57,6 +66,8 @@ BUGS
   containing only one meta data line.  Additional functionality will be added
   in future iterations.
 
+- Report bugs by creating an issue at:
+  - https://github.com/dcslagel/las-util-django/issues
 
 COPYRIGHT
 ------
