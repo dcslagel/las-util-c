@@ -95,7 +95,7 @@ install: $(PRG)
 # ------------------------------------------------------------------------------
 test: $(DIR_TEST)/test_main
 
-$(DIR_TEST)/test_main: tests/test_main.c
+$(DIR_TEST)/test_main: tests/test_main.c $(SRCS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -I src tests/test_main.c -o $(DIR_TEST)/test_main
 
