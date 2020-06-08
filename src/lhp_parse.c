@@ -10,7 +10,7 @@
 #include <ctype.h> // iscntrl(), isspace()
 #include <stdio.h> // FILE, fclose(), fopen(), fprintf(), perror()
 #include <stdlib.h> // malloc()
-#include <string.h> // strlen(), strncmp(), strncpy(),
+#include <string.h> // strlen(), strncmp(), strncpy(), strdup()
 
 
 #include "lhp_parse.h"
@@ -25,6 +25,8 @@ static char *mnemonic_name = NULL;
 static char *unit = NULL;
 static char *value = NULL;
 static char *desc = NULL;
+static size_t line_len = 0;
+static size_t line_idx = 0;
 
 struct record_fields {
     char *mnemonic_name;
@@ -46,8 +48,8 @@ static struct record_fields record_array[record_max];
 static FILE *open_lhp_file(const char *lhp_filename);
 static void clean_up_end_of_line(char *line);
 static void parse_section_type(char *line);
+static size_t parse_mnemonic_name(char *line);
 /* Unused functions
-static void parse_mnemonic_name(char *line_iter, size_t rec_idx);
 static void parse_unit(char *line_iter, size_t rec_idx);
 static void parse_value(char *line_iter, size_t rec_idx);
 static void parse_desc(char *line_iter, size_t rec_idx);
@@ -80,13 +82,13 @@ void read_las_file(const char *lhp_filename)
 
         parse_section_type(line);
 
-        size_t line_len = strlen(line);
+        line_len = strlen(line);
         size_t line_idx = 0;
 
         // Canidate content for fields: name, unit, value, desc
         lhp_field_buffer = malloc(line_len);
         if (lhp_field_buffer == NULL) {
-            perror("strncpy");
+            perror("malloc");
             exit(EXIT_FAILURE);
         }
 
@@ -98,23 +100,7 @@ void read_las_file(const char *lhp_filename)
         // ---------------------------------------------------------------------
         // Parse Mnemonic name.
         // ---------------------------------------------------------------------
-        size_t mnemonic_idx = 0;
-        while (line[line_idx] != '.') {
-          lhp_field_buffer[mnemonic_idx] = line[line_idx];
-          line_idx++;
-          mnemonic_idx++;
-        }
-
-        // Move line_idx past the '.' delimiter.
-        line_idx++;
-
-        mnemonic_name = malloc(strlen(lhp_field_buffer) + 1);
-        strncpy(mnemonic_name, lhp_field_buffer, strlen(lhp_field_buffer) + 1);
-        size_t mnemonic_reverse_idx = strlen(mnemonic_name) - 1;
-        while (mnemonic_name[mnemonic_reverse_idx] == ' ') {
-          mnemonic_name[mnemonic_reverse_idx] = '\0';
-          mnemonic_reverse_idx--;
-        }
+        line_idx = parse_mnemonic_name(line);
 
         // ---------------------------------------------------------------------
         // Parse unit.
@@ -203,6 +189,7 @@ void read_las_file(const char *lhp_filename)
         printf("Record-Size:  [%zu]\n", sizeof(line));
         printf("Mnemonic: [%zu]\n", sizeof(mnemonic_name));
         printf("Mnemonic: [%s]\n", mnemonic_name);
+
         printf("Unit: [%zu]\n", strlen(unit));
         printf("Unit: [%s]\n", unit);
         printf("Value: [%zu]\n", strlen(value));
@@ -237,17 +224,36 @@ static void parse_section_type(char *line)
                 exit(EXIT_FAILURE);
             }
         }
-        printf("Section Type: [%s]\n\n", lhp_section_type);
+        // printf("Section Type: [%s]\n\n", lhp_section_type);
     }
 }
 
-/* Unused functions.
-void parse_mnemonic_name(char *line_iter, size_t rec_idx)
+size_t parse_mnemonic_name(char *line)
 {
-    record_array[rec_idx].mnemonic_name = (char *)malloc(strlen(line_iter));
-    strncpy(record_array[rec_idx].mnemonic_name, line_iter, strlen(line_iter));
+    size_t mnemonic_idx = 0;
+    char *mnemonic_buf;
+    char *tofree;
+
+    tofree = mnemonic_buf = strdup(line);
+
+    while (line[line_idx] != '.') {
+      mnemonic_buf[mnemonic_idx] = line[line_idx];
+      line_idx++;
+      mnemonic_idx++;
+    }
+
+    // Move line_idx past the '.' delimiter.
+    line_idx++;
+
+    // Copy buffer to mnemonic_name property
+    mnemonic_buf[mnemonic_idx] = '\0';
+    mnemonic_name = strdup(mnemonic_buf);
+
+    free(tofree);
+    return line_idx;
 }
 
+/* Unused functions.
 void parse_unit(char *line_iter, size_t rec_idx)
 {
     record_array[rec_idx].unit = (char *)malloc(strlen(line_iter));
