@@ -67,7 +67,7 @@ BUGS
   in future iterations.
 
 - Report bugs by creating an issue at:
-  - https://github.com/dcslagel/las-util-django/issues
+  - https://github.com/dcslagel/las-header-parser-c/issues
 
 COPYRIGHT
 ------
