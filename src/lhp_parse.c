@@ -8,6 +8,7 @@
  */
 
 #include <ctype.h> // iscntrl(), isspace()
+#include <stdbool.h> // true, false
 #include <stdio.h> // FILE, fclose(), fopen(), fprintf(), perror()
 #include <stdlib.h> // malloc()
 #include <string.h> // strlen(), strncmp(), strncpy(), strdup()
@@ -15,10 +16,13 @@
 
 #include "lhp_parse.h"
 
+/*----------------------------------*/
 /* module private variables : start */
+/*----------------------------------*/
 /* use enum to make line_max constant */
 enum { line_max = 1024 };
 enum { record_max = 6 };
+
 static char *lhp_section_type = NULL;
 static char *lhp_field_buffer = NULL;
 static char *mnemonic_name = NULL;
@@ -26,7 +30,10 @@ static char *unit = NULL;
 static char *value = NULL;
 static char *desc = NULL;
 static size_t line_len = 0;
-static size_t line_idx = 0;
+
+// Index locations for the start of each field in a line.
+// static size_t line_idx = 0;
+static size_t line_indexes[4] = { 0, 0, 0, 0 };
 
 struct record_fields {
     char *mnemonic_name;
@@ -41,22 +48,25 @@ static struct record_fields record_array[record_max];
 //    struct record_fields record;
 //    record_list *next;
 // };
-
+/*----------------------------------*/
 /* module private variables : finis */
+/*----------------------------------*/
 
+/*----------------------------------*/
 /* module private functions : start */
+/*----------------------------------*/
 static FILE *open_lhp_file(const char *lhp_filename);
 static void clean_up_end_of_line(char *line);
 static void parse_section_type(char *line);
-static size_t parse_mnemonic_name(char *line);
-/* Unused functions
-static void parse_unit(char *line_iter, size_t rec_idx);
-static void parse_value(char *line_iter, size_t rec_idx);
-static void parse_desc(char *line_iter, size_t rec_idx);
-*/
+static void parse_mnemonic_name(char *line);
+static void parse_unit(char *line);
+static void parse_value(char *line);
+static void parse_desc(char *line);
 static void free_records(void);
 static void display_record(void);
+/*----------------------------------*/
 /* module private functions : finis */
+/*----------------------------------*/
 
 void read_las_file(const char *lhp_filename)
 {
@@ -77,13 +87,13 @@ void read_las_file(const char *lhp_filename)
     // TODO: move fgets() to my_io.c and wrap in my_fgets.c
     while (fgets(line, line_max, fp))
     {
+        size_t line_idx = 0;
 
         clean_up_end_of_line(line);
 
         parse_section_type(line);
 
         line_len = strlen(line);
-        size_t line_idx = 0;
 
         // Canidate content for fields: name, unit, value, desc
         lhp_field_buffer = malloc(line_len);
@@ -100,83 +110,23 @@ void read_las_file(const char *lhp_filename)
         // ---------------------------------------------------------------------
         // Parse Mnemonic name.
         // ---------------------------------------------------------------------
-        line_idx = parse_mnemonic_name(line);
+        parse_mnemonic_name(line);
 
         // ---------------------------------------------------------------------
         // Parse unit.
         // ---------------------------------------------------------------------
-
-        // Clear lhp_field_buffer.
-        memset(lhp_field_buffer,0,strlen(lhp_field_buffer));
-
-        size_t unit_idx = 0;
-        while (line[line_idx] != ' ') {
-          lhp_field_buffer[unit_idx] = line[line_idx];
-          line_idx++;
-          unit_idx++;
-        }
-
-        // Move line_idx past the ' ' delimiter.
-        line_idx++;
-
-        unit = malloc(strlen(lhp_field_buffer) + 1);
-        strncpy(unit, lhp_field_buffer, strlen(lhp_field_buffer) + 1);
+        parse_unit(line);
 
         // ---------------------------------------------------------------------
         // Parse value.
         // ---------------------------------------------------------------------
+        parse_value(line);
 
-        // Clear lhp_field_buffer.
-        memset(lhp_field_buffer,0,strlen(lhp_field_buffer));
-
-        size_t value_idx = 0;
-
-        // Move past spaces at the beginning of the value field.
-        while (line[line_idx] == ' ') {
-          line_idx++;
-        }
-
-        // Save value field into buffer
-        while (line[line_idx] != ':') {
-          lhp_field_buffer[value_idx] = line[line_idx];
-          line_idx++;
-          value_idx++;
-        }
-
-        // Move line_idx past the ':' delimiter.
-        line_idx++;
-
-        value = malloc(value_idx);
-        strncpy(value, lhp_field_buffer, value_idx);
-        value[value_idx] = '\0';
 
         // ---------------------------------------------------------------------
         // Parse description.
         // ---------------------------------------------------------------------
-
-        // Clear lhp_field_buffer.
-        memset(lhp_field_buffer,0,strlen(lhp_field_buffer));
-
-        size_t desc_idx = 0;
-
-        // Move past spaces at the beginning of the desc field.
-        while (line[line_idx] == ' ') {
-          line_idx++;
-        }
-
-        // Save desc field into buffer
-        while (line_idx <= strlen(line)) {
-          lhp_field_buffer[desc_idx] = line[line_idx];
-          line_idx++;
-          desc_idx++;
-        }
-
-        // Move line_idx past the ':' delimiter.
-        line_idx++;
-
-        desc = malloc(desc_idx);
-        strncpy(desc, lhp_field_buffer, desc_idx);
-        desc[desc_idx] = '\0';
+        parse_desc(line);
 
         // ---------------------------------------------------------------------
         // Display fields
@@ -228,50 +178,129 @@ static void parse_section_type(char *line)
     }
 }
 
-size_t parse_mnemonic_name(char *line)
+void parse_mnemonic_name(char *line)
 {
-    size_t mnemonic_idx = 0;
-    char *mnemonic_buf;
+    size_t my_idx = 0;
+    char *my_buf;
     char *tofree;
+    size_t line_idx = line_indexes[0];
 
-    tofree = mnemonic_buf = strdup(line);
+    tofree = my_buf = strdup(line);
 
     while (line[line_idx] != '.') {
-      mnemonic_buf[mnemonic_idx] = line[line_idx];
+      my_buf[my_idx] = line[line_idx];
       line_idx++;
-      mnemonic_idx++;
+      my_idx++;
     }
 
     // Move line_idx past the '.' delimiter.
     line_idx++;
+    line_indexes[1] = line_idx;
 
     // Copy buffer to mnemonic_name property
-    mnemonic_buf[mnemonic_idx] = '\0';
-    mnemonic_name = strdup(mnemonic_buf);
+    my_buf[my_idx] = '\0';
+    mnemonic_name = strdup(my_buf);
 
     free(tofree);
-    return line_idx;
 }
 
-/* Unused functions.
-void parse_unit(char *line_iter, size_t rec_idx)
+void parse_unit(char *line)
 {
-    record_array[rec_idx].unit = (char *)malloc(strlen(line_iter));
-    strncpy(record_array[rec_idx].unit, line_iter, strlen(line_iter));
+    size_t my_idx = 0;
+    char *my_buf;
+    char *tofree;
+
+    if (line_indexes[1] == 0) {
+      parse_mnemonic_name(line);
+    }
+
+    size_t line_idx = line_indexes[1];
+
+    tofree = my_buf = strdup(line + line_idx);
+
+    while (isspace(line[line_idx]) == false) {
+      my_buf[my_idx] = line[line_idx];
+      line_idx++;
+      my_idx++;
+    }
+
+    // Move line_idx past the '.' delimiter.
+    line_idx++;
+    line_indexes[2] = line_idx;
+
+    // Copy buffer to mnemonic_name property
+    my_buf[my_idx] = '\0';
+    unit = strdup(my_buf);
+
+    free(tofree);
 }
 
-void parse_value(char *line_iter, size_t rec_idx)
+
+void parse_value(char *line)
 {
-    record_array[rec_idx].value = (char *)malloc(strlen(line_iter));
-    strncpy(record_array[rec_idx].value, line_iter, strlen(line_iter));
+    size_t my_idx = 0;
+    char *my_buf;
+    char *tofree;
+
+    if (line_indexes[2] == 0) {
+      parse_unit(line);
+    }
+
+    size_t line_idx = line_indexes[2];
+
+    tofree = my_buf = strdup(line + line_idx);
+
+    while (isspace(line[line_idx]) == true) {
+      line_idx++;
+    }
+
+    while (line[line_idx] != ':') {
+      my_buf[my_idx] = line[line_idx];
+      line_idx++;
+      my_idx++;
+    }
+
+    // Move line_idx past the '.' delimiter.
+    line_idx++;
+    line_indexes[3] = line_idx;
+
+    // Copy buffer to mnemonic_name property
+    my_buf[my_idx] = '\0';
+    value = strdup(my_buf);
+
+    free(tofree);
 }
 
-void parse_desc(char *line_iter, size_t rec_idx)
+void parse_desc(char *line)
 {
-    record_array[rec_idx].desc = (char *)malloc(strlen(line_iter));
-    strncpy(record_array[rec_idx].desc, line_iter, strlen(line_iter));
+    size_t my_idx = 0;
+    char *my_buf;
+    char *tofree;
+
+    if (line_indexes[3] == 0) {
+      parse_value(line);
+    }
+
+    size_t line_idx = line_indexes[3];
+
+    tofree = my_buf = strdup(line + line_idx);
+
+    while (isspace(line[line_idx]) == true) {
+      line_idx++;
+    }
+
+    while (line[line_idx] != '\0') {
+      my_buf[my_idx] = line[line_idx];
+      line_idx++;
+      my_idx++;
+    }
+
+    // Copy buffer to mnemonic_name property
+    my_buf[my_idx] = '\0';
+    desc = strdup(my_buf);
+
+    free(tofree);
 }
-*/
 
 
 

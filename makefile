@@ -8,9 +8,9 @@
 # GCC Compiler
 # ------------------------------------------------------------------------------
 GCC_VER = 9
-CC   = /usr/local/opt/gcc/bin/gcc-$(GCC_VER)
-COV   = /usr/local/opt/gcc/bin/gcov-$(GCC_VER)
-CFLAGS = -Wall -Wextra -Wpedantic -pedantic-errors -I include
+CC      = /usr/local/opt/gcc/bin/gcc-$(GCC_VER)
+COV     = /usr/local/opt/gcc/bin/gcov-$(GCC_VER)
+CFLAGS  = -Wall -Wextra -Wpedantic -pedantic-errors -I include
 
 
 # ------------------------------------------------------------------------------
@@ -49,16 +49,17 @@ vpath %.c src
 vpath %.h include
 
 
-all: $(PRG)
 
 # ------------------------------------------------------------------------------
 # Make release targets
 # ------------------------------------------------------------------------------
+all: $(PRG)
+
 $(PRG) : $(DIR_REL)/$(PRG)
 
 $(DIR_REL)/$(PRG): $(SRCS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $^ -o $(DIR_REL)/lh_parser
+	$(CC) $(CFLAGS) $^ -o $(DIR_REL)/$(PRG)
 
 run_rel:
 	./$(DIR_REL)/$(PRG) -f $(DIR_DATA)/3.0/$(LAS_FILE)
@@ -107,7 +108,7 @@ clean_test:
 
 
 # ------------------------------------------------------------------------------
-# General projet mainenance targets
+# General project maintenance targets
 # ------------------------------------------------------------------------------
 clean:
 	$(RM) $(OBJS)
@@ -116,13 +117,26 @@ clean:
 # ------------------------------------------------------------------------------
 #  PHONEY
 # ------------------------------------------------------------------------------
-.PHONEY: clean depends run runtest
+.PHONEY: clean make_depends run runtest
 
 
 # ------------------------------------------------------------------------------
 #  Dependency targets
 # ------------------------------------------------------------------------------
-depends: $(SRCS) 
-	$(CC) $(CFLAGS) -E -MM $^ > depends
+make_depends: $(SRCS)
+	$(CC) $(CFLAGS) -E -MM $^ > depends.mk
 
-include depends
+include depends.mk
+
+
+# ------------------------------------------------------------------------------
+#  Help
+# ------------------------------------------------------------------------------
+AWK = /usr/bin/awk
+SORT = /usr/bin/sort
+
+.PHONEY: help
+help:
+	@$(MAKE) --print-data-base --question | \
+		$(AWK) '/^[^.%][-A-Za-z0-9_]*:/ {print substr($$1, 1, length($$1)-1)}' | \
+		$(SORT)
