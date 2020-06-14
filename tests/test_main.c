@@ -77,10 +77,27 @@ int test_parse_m_unit(void) {
   return(1);
 }
 
+int test_parse_value(void) {
+  parse_value(test_ver_rec);
+  if (strcmp(value, "3.0 ") == 0) {
+    printf("FAILED: test_parse_value: expected [%d], actual: [%d]\n", ' ', value[3]);
+    return(1);
+  } else {
+    return(0);
+  }
+  return(1);
+}
+
 int main(void)
 {
   int passed = 0;
   int failed = 0;
+
+  if (test_parse_value()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
 
   if (test_parse_m_unit()) {
     passed = passed + 1;
