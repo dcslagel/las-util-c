@@ -22,6 +22,7 @@ int test_section_type_is_empty(void);
 
 static char *test_rec_001 = "VERS.  3.0 : CWLS LOG ASCII STANDARD -VERSION 3.0";
 static char *test_rec_002 = "STRT .M      1670.0000              : First Index Value";
+static char *test_rec_003 = "STRT .M      1670.0000              : ";
 
 // resets lhp_parser.line_indexes[]
 void reset_line_indexes(void)
@@ -102,6 +103,28 @@ int test_parse_value(void) {
   return(1);
 }
 
+int test_parse_desc(void) {
+  parse_desc(test_rec_001);
+  if (strcmp(desc, "CWLS LOG ASCII STANDARD -VERSION 3.0") == 0) {
+    return(1);
+  } else {
+    printf("FAILED: test_parse_desc: actual: [%s]\n", desc);
+    return(0);
+  }
+  return(1);
+}
+
+int test_parse_empty_desc(void) {
+  parse_desc(test_rec_003);
+  if (strcmp(desc, "") == 0) {
+    return(1);
+  } else {
+    printf("FAILED: test_parse_desc: actual: [%s]\n", desc);
+    return(0);
+  }
+  return(1);
+}
+
 int main(void)
 {
   int passed = 0;
@@ -145,11 +168,26 @@ int main(void)
     failed = failed + 1;
   }
 
+  if (test_parse_desc()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
   // Test a different line 
   // So rest line indexes
   reset_line_indexes();
 
   if (test_parse_m_unit()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  // Test a different line 
+  // So rest line indexes
+  reset_line_indexes();
+  if (test_parse_empty_desc()) {
     passed = passed + 1;
   } else {
     failed = failed + 1;
