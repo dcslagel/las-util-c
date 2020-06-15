@@ -55,12 +55,13 @@ Desc: [CWLS LOG ASCII STANDARD -VERSION 3.0]
 ```
 PROJECT
 -------
-The current work-in-progress milestone is 0.0.2:
+The current work-in-progress milestone is 0.0.3:
 
-https://github.com/dcslagel/las-util-parser-c/milestone/4
+https://github.com/dcslagel/las-header-parser-c/milestone/5
 - Goals:
-  - Organize and stabilize the directory structure and makefile(s).
-  - Implement basic tests and basic test-suite infrastructure.
+  - Refactor initial code for improved modularity and maintainablity.
+  - Add command flags for each displaying each of the fields: name, unit,
+    value, and description.
 
 las-parser-c's project road-map is managed in github milestones at:
 
@@ -73,9 +74,9 @@ https://github.com/dcslagel/las-header-parser-c/issues
 BUGS
 ----
 
-- Functionality is severely limited to reading the fields from a LAS file
-  containing only one meta data line.  Additional functionality will be added
-  in future iterations.
+- Functionality is limited to reading the fields from a LAS file containing
+  only the v2.0 type sections.  Additional functionality will be added in
+  future iterations.
 
 - Report bugs by creating an issue at:
   - https://github.com/dcslagel/las-header-parser-c/issues
