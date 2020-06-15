@@ -12,12 +12,25 @@
 
 #include "lhp_parse.c"
 
+// resets lhp_parser.line_indexes[]
+void reset_line_indexes(void);
+
 int test_parse_mnemonic(void); 
 int test_lhp_section_type_is_null(void);
 int test_section_type_is_ver(void);
 int test_section_type_is_empty(void);
 
-static char *test_ver_rec = "VERS.  3.0 : CWLS LOG ASCII STANDARD -VERSION 3.0";
+static char *test_rec_001 = "VERS.  3.0 : CWLS LOG ASCII STANDARD -VERSION 3.0";
+static char *test_rec_002 = "STRT .M      1670.0000              : First Index Value";
+
+// resets lhp_parser.line_indexes[]
+void reset_line_indexes(void)
+{
+  line_indexes[0] = 0;
+  line_indexes[1] = 0;
+  line_indexes[2] = 0;
+  line_indexes[3] = 0;
+}
 
 int test_lhp_section_type_is_null(void) {
   if (lhp_section_type == NULL) {
@@ -46,32 +59,44 @@ int test_section_type_is_empty(void) {
 }
 
 int test_parse_mnemonic(void) {
-  parse_mnemonic_name(test_ver_rec);
+  parse_mnemonic_name(test_rec_001);
   if (strcmp(mnemonic_name, "VERS") == 0) {
     return(1);
   } else {
+    printf("FAILED: test_parse_mnemonic_name: actual: [%s]\n", mnemonic_name);
     return(0);
   }
   return(1);
 }
 
 int test_parse_empty_unit(void) {
-  parse_unit(test_ver_rec);
+  parse_unit(test_rec_001);
   if (strcmp(unit, "") == 0) {
     return(1);
   } else {
+    printf("FAILED: test_parse_unit: actual: [%s]\n", unit);
     return(0);
   }
   return(1);
 }
 
 int test_parse_m_unit(void) {
-  char* my_test_rec = "STRT .M      1670.0000              : First Index Value";
-
-  parse_unit(my_test_rec);
+  parse_unit(test_rec_002);
   if (strcmp(unit, "M") == 0) {
     return(1);
   } else {
+    printf("FAILED: test_parse_unit: actual: [%s]\n", unit);
+    return(0);
+  }
+  return(1);
+}
+
+int test_parse_value(void) {
+  parse_value(test_rec_001);
+  if (strcmp(value, "3.0 ") == 0) {
+    return(1);
+  } else {
+    printf("FAILED: test_parse_value: actual: [%s]\n", value);
     return(0);
   }
   return(1);
@@ -82,23 +107,7 @@ int main(void)
   int passed = 0;
   int failed = 0;
 
-  if (test_parse_m_unit()) {
-    passed = passed + 1;
-  } else {
-    failed = failed + 1;
-  }
 
-  if (test_parse_empty_unit()) {
-    passed = passed + 1;
-  } else {
-    failed = failed + 1;
-  }
-
-  if (test_parse_mnemonic()) {
-    passed = passed + 1;
-  } else {
-    failed = failed + 1;
-  }
   if (test_lhp_section_type_is_null()) {
     passed = passed + 1;
   } else {
@@ -112,6 +121,35 @@ int main(void)
   }
 
   if (test_section_type_is_empty()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  // Test a line
+  if (test_parse_mnemonic()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  if (test_parse_empty_unit()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  if (test_parse_value()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  // Test a different line 
+  // So rest line indexes
+  reset_line_indexes();
+
+  if (test_parse_m_unit()) {
     passed = passed + 1;
   } else {
     failed = failed + 1;
