@@ -30,7 +30,7 @@ RM = rm -fv
 PRG       = lh_parser
 SRCS      = lhp_args.c lhp_parse.c main.c
 OBJS      = $(subst .c,.o,$(SRCS))
-LAS_FILE  = ver_line_30.las
+LAS_FILE  = ver_lines_30.las
 
 
 # ------------------------------------------------------------------------------
@@ -62,6 +62,9 @@ $(DIR_REL)/$(PRG): $(SRCS)
 	$(CC) $(CFLAGS) $^ -o $(DIR_REL)/$(PRG)
 
 run_rel:
+	@echo "#----------------------------------------#"
+	@echo "LAS_FILE: [$(LAS_FILE)]"
+	@echo "#----------------------------------------#"
 	./$(DIR_REL)/$(PRG) -f $(DIR_DATA)/3.0/$(LAS_FILE)
 
 clean_rel:
