@@ -19,33 +19,32 @@
 /*----------------------------------*/
 /* module private variables : start */
 /*----------------------------------*/
-/* use enum to make line_max constant */
-enum { line_max = 1024 };
+/* use enum to make line_buf_size constant */
+enum { line_buf_size = 1024 };
 enum { record_max = 6 };
 
 static char *lhp_section_type = NULL;
 static char *lhp_field_buffer = NULL;
-static char *mnemonic_name = NULL;
-static char *unit = NULL;
-static char *value = NULL;
-static char *desc = NULL;
 static size_t line_len = 0;
+static size_t rec_idx = 0;
 
 // Index locations for the start of each field in a line.
 // static size_t line_idx = 0;
 static size_t line_indexes[4] = { 0, 0, 0, 0 };
 
-struct record_fields {
+struct las_metadata_record {
     char *mnemonic_name;
     char *unit;
     char *value;
     char *desc;
 };
 
-static struct record_fields record_array[record_max];
+static struct las_metadata_record one_record;
+
+static struct las_metadata_record record_array[record_max];
 // consider replacing record_array with a record_linked_list
 // struct record_list {
-//    struct record_fields record;
+//    struct las_metadata_record record;
 //    record_list *next;
 // };
 /*----------------------------------*/
@@ -63,7 +62,7 @@ static void parse_unit(char *line);
 static void parse_value(char *line);
 static void parse_desc(char *line);
 static void free_records(void);
-static void display_record(void);
+static void display_records(void);
 /*----------------------------------*/
 /* module private functions : finis */
 /*----------------------------------*/
@@ -71,12 +70,7 @@ static void display_record(void);
 void read_las_file(const char *lhp_filename)
 {
     FILE *fp;
-    char line[line_max];
-    /* unused variables
-    size_t rec_idx = 0;
-    char field_id = '\0';
-    char *line_iter;
-    */
+    char line[line_buf_size];
 
     fp = open_lhp_file(lhp_filename);
 
@@ -84,13 +78,11 @@ void read_las_file(const char *lhp_filename)
         return;
     }
 
-    // TODO: move fgets() to my_io.c and wrap in my_fgets.c
-    while (fgets(line, line_max, fp))
+    while (fgets(line, line_buf_size, fp))
     {
         size_t line_idx = 0;
 
         clean_up_end_of_line(line);
-
         parse_section_type(line);
 
         line_len = strlen(line);
@@ -108,54 +100,28 @@ void read_las_file(const char *lhp_filename)
         }
 
         // ---------------------------------------------------------------------
-        // Parse Mnemonic name.
+        // Parse fields for the current line/record
         // ---------------------------------------------------------------------
         parse_mnemonic_name(line);
-
-        // ---------------------------------------------------------------------
-        // Parse unit.
-        // ---------------------------------------------------------------------
         parse_unit(line);
-
-        // ---------------------------------------------------------------------
-        // Parse value.
-        // ---------------------------------------------------------------------
         parse_value(line);
-
-
-        // ---------------------------------------------------------------------
-        // Parse description.
-        // ---------------------------------------------------------------------
         parse_desc(line);
 
-        // ---------------------------------------------------------------------
-        // Display fields
-        // ---------------------------------------------------------------------
+        rec_idx = rec_idx + 1;
 
-        printf("#----------------------------------------#\n");
-        printf("Record: [%s]\n", line);
-        // %zu: size_t
-        printf("Record-Size:  [%zu]\n", strlen(line));
-        printf("Record-Size:  [%zu]\n", sizeof(line));
-        printf("Mnemonic: [%zu]\n", sizeof(mnemonic_name));
-        printf("Mnemonic: [%s]\n", mnemonic_name);
+        if (rec_idx >= record_max) {
+          printf("REC-IDX: %zu, MAX: %ul\n", rec_idx, record_max);
+          break;
+        }
 
-        printf("Unit: [%zu]\n", strlen(unit));
-        printf("Unit: [%s]\n", unit);
-        printf("Value: [%zu]\n", strlen(value));
-        printf("Value: [%s]\n", value);
-        printf("Desc: [%zu]\n", strlen(desc));
-        printf("Desc: [%s]\n", desc);
-        printf("#----------------------------------------#\n");
-
-        return;
+        // return;
     }
 
     if (fclose(fp) == EOF) {
         perror("close");
     }
 
-    display_record();
+    display_records();
 
     free_records();
 }
@@ -199,7 +165,7 @@ void parse_mnemonic_name(char *line)
 
     // Copy buffer to mnemonic_name property
     my_buf[my_idx] = '\0';
-    mnemonic_name = strdup(my_buf);
+    record_array[rec_idx].mnemonic_name = strdup(my_buf);
 
     free(tofree);
 }
@@ -230,7 +196,7 @@ void parse_unit(char *line)
 
     // Copy buffer to mnemonic_name property
     my_buf[my_idx] = '\0';
-    unit = strdup(my_buf);
+    record_array[rec_idx].unit = strdup(my_buf);
 
     free(tofree);
 }
@@ -266,7 +232,7 @@ void parse_value(char *line)
 
     // Copy buffer to mnemonic_name property
     my_buf[my_idx] = '\0';
-    value = strdup(my_buf);
+    record_array[rec_idx].value = strdup(my_buf);
 
     free(tofree);
 }
@@ -297,7 +263,8 @@ void parse_desc(char *line)
 
     // Copy buffer to mnemonic_name property
     my_buf[my_idx] = '\0';
-    desc = strdup(my_buf);
+    one_record.desc = strdup(my_buf);
+    record_array[rec_idx].desc = strdup(my_buf);
 
     free(tofree);
 }
@@ -348,9 +315,9 @@ void free_records(void)
 }
 
 
-void display_record(void)
+void display_records(void)
 {
-    for (size_t idx = 0; idx < record_max; idx++) {
+    for (size_t idx = 0; idx < rec_idx; idx++) {
         // display record
         printf("#----------------------------------------#\n");
         printf("Record: [%zu]\n", idx);
