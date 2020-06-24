@@ -25,7 +25,6 @@ enum { record_max = 6 };
 
 static char *lhp_section_type = NULL;
 static char *lhp_field_buffer = NULL;
-static size_t line_len = 0;
 static size_t rec_idx = 0;
 
 // Index locations for the start of each field in a line.
@@ -38,8 +37,6 @@ struct las_metadata_record {
     char *value;
     char *desc;
 };
-
-static struct las_metadata_record one_record;
 
 static struct las_metadata_record record_array[record_max];
 // consider replacing record_array with a record_linked_list
@@ -56,7 +53,7 @@ static struct las_metadata_record record_array[record_max];
 /*----------------------------------*/
 static FILE *open_lhp_file(const char *lhp_filename);
 static void clean_up_end_of_line(char *line);
-static void parse_section_type(char *line);
+static size_t parse_section_type(char *line);
 static void parse_mnemonic_name(char *line);
 static void parse_unit(char *line);
 static void parse_value(char *line);
@@ -71,6 +68,7 @@ void read_las_file(const char *lhp_filename)
 {
     FILE *fp;
     char line[line_buf_size];
+    size_t line_len = 0;
 
     fp = open_lhp_file(lhp_filename);
 
@@ -83,7 +81,10 @@ void read_las_file(const char *lhp_filename)
         size_t line_idx = 0;
 
         clean_up_end_of_line(line);
-        parse_section_type(line);
+        if (parse_section_type(line)) {
+          continue;
+        }
+
 
         line_len = strlen(line);
 
@@ -97,6 +98,10 @@ void read_las_file(const char *lhp_filename)
         // Skip spaces at the beginning of the string.
         while (isspace(line[line_idx])) {
           line_idx++;
+        }
+
+        if (strncmp("#", line, 1) == 0) {
+          continue;
         }
 
         // ---------------------------------------------------------------------
@@ -126,9 +131,11 @@ void read_las_file(const char *lhp_filename)
     free_records();
 }
 
-static void parse_section_type(char *line)
+static size_t parse_section_type(char *line)
 {
+    size_t is_section = 0;    
     size_t line_len = strlen(line);
+
     // Get the section type
     if (strncmp("~", line, 1) == 0) {
         lhp_section_type = malloc(line_len);
@@ -140,8 +147,10 @@ static void parse_section_type(char *line)
                 exit(EXIT_FAILURE);
             }
         }
-        // printf("Section Type: [%s]\n\n", lhp_section_type);
+        is_section = 1;
+        printf("Section Type: [%s]\n\n", lhp_section_type);
     }
+    return(is_section);
 }
 
 void parse_mnemonic_name(char *line)
@@ -263,7 +272,6 @@ void parse_desc(char *line)
 
     // Copy buffer to mnemonic_name property
     my_buf[my_idx] = '\0';
-    one_record.desc = strdup(my_buf);
     record_array[rec_idx].desc = strdup(my_buf);
 
     free(tofree);
