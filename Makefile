@@ -30,7 +30,7 @@ RM = rm -fv
 PRG       = lh_parser
 SRCS      = lhp_args.c lhp_parse.c main.c
 OBJS      = $(subst .c,.o,$(SRCS))
-LAS_FILE  = ver_lines_30.las
+LAS_FILE  = dev_example_30.las
 
 
 # ------------------------------------------------------------------------------
