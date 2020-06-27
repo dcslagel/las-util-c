@@ -8,7 +8,7 @@
  */
 
 #include <stdio.h>  // printf
-#include <stdlib.h> // exit, EXIT_SUCCESS
+#include <stdlib.h> // calloc, exit, EXIT_SUCCESS
 
 #include "lhp_parse.c"
 
@@ -23,6 +23,10 @@ int test_section_type_is_empty(void);
 static char *test_rec_001 = "VERS.  3.0 : CWLS LOG ASCII STANDARD -VERSION 3.0";
 static char *test_rec_002 = "STRT .M      1670.0000              : First Index Value";
 static char *test_rec_003 = "STRT .M      1670.0000              : ";
+
+// Configure array of records for testing
+static size_t test_array_size = 1;
+struct lasm_record *lasm_records = NULL;
 
 // resets lhp_parser.line_indexes[]
 void reset_line_indexes(void)
@@ -60,66 +64,72 @@ int test_section_type_is_empty(void) {
 }
 
 int test_parse_mnemonic(void) {
-  parse_mnemonic_name(test_rec_001);
-  if (strcmp(mnemonic_name, "VERS") == 0) {
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  parse_mnemonic_name(test_rec_001, lasm_records);
+  if (strcmp(lasm_records[0].mnemonic_name, "VERS") == 0) {
     return(1);
   } else {
-    printf("FAILED: test_parse_mnemonic_name: actual: [%s]\n", mnemonic_name);
+    printf("FAILED: test_parse_mnemonic_name: actual: [%s]\n", lasm_records[1].mnemonic_name);
     return(0);
   }
   return(1);
 }
 
 int test_parse_empty_unit(void) {
-  parse_unit(test_rec_001);
-  if (strcmp(unit, "") == 0) {
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  parse_unit(test_rec_001, lasm_records);
+  if (strcmp(lasm_records[0].unit, "") == 0) {
     return(1);
   } else {
-    printf("FAILED: test_parse_unit: actual: [%s]\n", unit);
+    printf("FAILED: test_parse_unit: actual: [%s]\n", lasm_records[1].unit);
     return(0);
   }
   return(1);
 }
 
 int test_parse_m_unit(void) {
-  parse_unit(test_rec_002);
-  if (strcmp(unit, "M") == 0) {
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  parse_unit(test_rec_002, lasm_records);
+  if (strcmp(lasm_records[0].unit, "M") == 0) {
     return(1);
   } else {
-    printf("FAILED: test_parse_unit: actual: [%s]\n", unit);
+    printf("FAILED: test_parse_unit: actual: [%s]\n", lasm_records[1].unit);
     return(0);
   }
   return(1);
 }
 
 int test_parse_value(void) {
-  parse_value(test_rec_001);
-  if (strcmp(value, "3.0 ") == 0) {
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  parse_value(test_rec_001, lasm_records);
+  if (strcmp(lasm_records[0].value, "3.0 ") == 0) {
     return(1);
   } else {
-    printf("FAILED: test_parse_value: actual: [%s]\n", value);
+    printf("FAILED: test_parse_value: actual: [%s]\n", lasm_records[1].value);
     return(0);
   }
   return(1);
 }
 
 int test_parse_desc(void) {
-  parse_desc(test_rec_001);
-  if (strcmp(desc, "CWLS LOG ASCII STANDARD -VERSION 3.0") == 0) {
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  parse_desc(test_rec_001, lasm_records);
+  if (strcmp(lasm_records[0].desc, "CWLS LOG ASCII STANDARD -VERSION 3.0") == 0) {
     return(1);
   } else {
-    printf("FAILED: test_parse_desc: actual: [%s]\n", desc);
+    printf("FAILED: test_parse_desc: actual: [%s]\n", lasm_records[1].desc);
     return(0);
   }
   return(1);
 }
 
 int test_parse_empty_desc(void) {
-  parse_desc(test_rec_003);
-  if (strcmp(desc, "") == 0) {
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  parse_desc(test_rec_003, lasm_records);
+  if (strcmp(lasm_records[0].desc, "") == 0) {
     return(1);
   } else {
-    printf("FAILED: test_parse_desc: actual: [%s]\n", desc);
+    printf("FAILED: test_parse_desc: actual: [%s]\n", lasm_records[1].desc);
     return(0);
   }
   return(1);
@@ -130,6 +140,13 @@ int main(void)
   int passed = 0;
   int failed = 0;
 
+  /*
+  struct lasm_record *lasm_records = calloc(test_array_size, sizeof(struct lasm_record));
+  if (!lasm_records) {
+      fprintf(stderr, "error: virtual memory exhausted: Unable to create lasm_records array.\n");
+      exit(EXIT_FAILURE);
+  }
+  */
 
   if (test_lhp_section_type_is_null()) {
     passed = passed + 1;
