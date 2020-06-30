@@ -11,6 +11,9 @@ GCC_VER = 9
 CC      = /usr/local/opt/gcc/bin/gcc-$(GCC_VER)
 COV     = /usr/local/opt/gcc/bin/gcov-$(GCC_VER)
 CFLAGS  = -Wall -Wextra -Wpedantic -pedantic-errors -I include
+# CFLAGS  = -Wall -Wextra -Wpedantic -Werror -pedantic-errors -I include
+# Check memory issues
+# CFLAGS  = -Wall -Wextra -Wpedantic -pedantic-errors -fsanitize=address -g -O0 -I include
 
 
 # ------------------------------------------------------------------------------
@@ -28,7 +31,7 @@ RM = rm -fv
 # Project variables
 # ------------------------------------------------------------------------------
 PRG       = lh_parser
-SRCS      = lhp_args.c lhp_parse.c main.c
+SRCS      = lhp_args.c lhp_file.c lhp_line.c lhp_metadata.c lhp_parse.c main.c
 OBJS      = $(subst .c,.o,$(SRCS))
 LAS_FILE  = dev_example_30.las
 
