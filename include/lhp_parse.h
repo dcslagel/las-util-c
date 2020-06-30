@@ -12,7 +12,7 @@
 
 
 /* public-functions */
-void read_las_file(const char *lhp_filename);
+void parse_las_file(const char *lhp_filename);
 /* end public-functions */
 
 #endif /* PQ_PARSE_H */
