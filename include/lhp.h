@@ -12,5 +12,8 @@
 
 #include "lhp_args.h"
 #include "lhp_parse.h"
+#include "lhp_line.h"
+#include "lhp_parse.h"
+#include "lhp_metadata.h"
 
 #endif /* LHP_H */
