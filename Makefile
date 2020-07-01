@@ -31,8 +31,11 @@ RM = rm -fv
 # Project variables
 # ------------------------------------------------------------------------------
 PRG       = lh_parser
-SRCS      = lhp_args.c lhp_file.c lhp_line.c lhp_metadata.c lhp_parse.c main.c
-OBJS      = $(subst .c,.o,$(SRCS))
+SRCS      = lhp_args.c lhp_file.c lhp_line.c lhp_metadata.c lhp_parse.c
+MAIN_SRCS = $(SRCS) main.c
+TEST_SRCS = $(SRCS) tests/lhp_test_parse.c tests/test_main.c
+MAIN_OBJS      = $(subst .c,.o,$(MAIN_SRCS))
+TEST_OBJS      = $(subst .c,.o,$(TEST_SRCS))
 LAS_FILE  = dev_example_30.las
 
 
@@ -60,7 +63,7 @@ all: $(PRG)
 
 $(PRG) : $(DIR_REL)/$(PRG)
 
-$(DIR_REL)/$(PRG): $(SRCS)
+$(DIR_REL)/$(PRG): $(MAIN_SRCS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $^ -o $(DIR_REL)/$(PRG)
 
@@ -78,7 +81,7 @@ clean_rel:
 # ------------------------------------------------------------------------------
 $(PRG)_dev : $(DIR_DEV)/lh_parser
 
-$(DIR_DEV)/$(PRG): $(SRCS)
+$(DIR_DEV)/$(PRG): $(MAIN_SRCS)
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(DEBUG) $^ -o $(DIR_DEV)/lh_parser
 
@@ -102,9 +105,9 @@ install: $(PRG)
 # ------------------------------------------------------------------------------
 test: $(DIR_TEST)/test_main
 
-$(DIR_TEST)/test_main: tests/test_main.c $(SRCS)
+$(DIR_TEST)/test_main: $(TEST_SRCS)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -I src tests/test_main.c -o $(DIR_TEST)/test_main
+	$(CC) $(CFLAGS) -I src $^ -o $(DIR_TEST)/test_main
 
 run_test:
 	$(DIR_TEST)/test_main
