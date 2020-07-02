@@ -31,9 +31,9 @@ RM = rm -fv
 # Project variables
 # ------------------------------------------------------------------------------
 PRG       = lh_parser
-SRCS      = lhp_args.c lhp_file.c lhp_line.c lhp_metadata.c lhp_parse.c
+SRCS      = lhp_args.c lhp_file.c lhp_line.c lhp_metadata.c lhp_parse.c lhp_section.c
 MAIN_SRCS = $(SRCS) main.c
-TEST_SRCS = $(SRCS) tests/lhp_test_parse.c tests/test_main.c
+TEST_SRCS = $(SRCS) tests/lhp_test_parse.c tests/lhp_test_section.c tests/test_main.c
 MAIN_OBJS      = $(subst .c,.o,$(MAIN_SRCS))
 TEST_OBJS      = $(subst .c,.o,$(TEST_SRCS))
 LAS_FILE  = dev_example_30.las

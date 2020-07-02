@@ -11,9 +11,10 @@
 #define LHP_H
 
 #include "lhp_args.h"
-#include "lhp_parse.h"
+#include "lhp_file.h"
 #include "lhp_line.h"
-#include "lhp_parse.h"
 #include "lhp_metadata.h"
+#include "lhp_parse.h"
+#include "lhp_section.h"
 
 #endif /* LHP_H */
