@@ -7,8 +7,8 @@
  * License-Identifier: MIT
  */
 
-#ifndef LH_METADATA_H
-#define LH_METADATA_H
+#ifndef LHP_METADATA_H
+#define LHP_METADATA_H
 
 #include "lhp_line.h"
 
@@ -32,4 +32,4 @@ extern void lhp_data_init(struct LhpData* lhpdata, size_t size);
 extern void parse_data_line(struct LhpMetadata* lhp_metadata, struct LhpLine* line);
 /* end public-functions */
 
-#endif /* LH_METADATA_H */
+#endif /* LHP_METADATA_H */

@@ -7,8 +7,8 @@
  * License-Identifier: MIT
  */
 
-#ifndef PQ_ARGS_H
-#define PQ_ARGS_H
+#ifndef LHP_ARGS_H
+#define LHP_ARGS_H
 
 int arg_parse(int argc, char *argv[]);
 
@@ -16,4 +16,4 @@ char *get_filename_arg(void);
 
 void release_arg_memory(void);
 
-#endif /* PQ_ARGS_H */
+#endif /* LHP_ARGS_H */

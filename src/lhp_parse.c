@@ -12,16 +12,11 @@
 #include <stdlib.h> // malloc()
 #include <string.h> // strlen(), strncmp(), strncpy(), strdup()
 
-
-#include "lhp_parse.h"
-#include "lhp_file.h"
-#include "lhp_line.h"
-#include "lhp_metadata.h"
+#include "lhp.h"
 
 //-------------------------------------------------------------------
 // module private variables : start
 //-------------------------------------------------------------------
-static char *lhp_section_type = NULL;
 static size_t rec_idx = 0;
 //-------------------------------------------------------------------
 // module private variables : finis
@@ -32,12 +27,14 @@ static size_t rec_idx = 0;
 //-------------------------------------------------------------------
 static void free_records(struct LhpMetadata* lasm_records, size_t lhp_array_size);
 static void display_records(struct LhpMetadata* lasm_records);
-static size_t parse_section_type(char *line);
 //-------------------------------------------------------------------
 // module private functions : finis
 //-------------------------------------------------------------------
 
 
+//-------------------------------------------------------------------
+// API: public-functions
+//-------------------------------------------------------------------
 void parse_las_file(const char *lhp_filename)
 {
     struct LhpFile lhpfile;
@@ -49,13 +46,16 @@ void parse_las_file(const char *lhp_filename)
     struct LhpData lhpdata;
     lhp_data_init(&lhpdata, lhpfile.size);
 
+    struct LhpSections lhpsections;
+    lhp_sections_init(&lhpsections);
+
     // Memory: free(lasm_records); when done.
     struct LhpMetadata *lasm_records = lhpdata.array;
 
     while (fgets(lhpline.line, lhpline.size, lhpfile.fp))
     {
         lhp_line_config(&lhpline);
-        if (parse_section_type(lhpline.line)) {
+        if (lhp_section_parse(&lhpsections, lhpline.line, rec_idx)) {
           continue;
         }
 
@@ -76,20 +76,9 @@ void parse_las_file(const char *lhp_filename)
     }
 
     display_records(lasm_records);
+    // display_sections(&lhpsections);
 
     free_records(lasm_records, lhpdata.len);
-}
-
-static size_t parse_section_type(char *line)
-{
-    size_t is_section = 0;
-
-    if (strncmp("~", line, 1) == 0) {
-      lhp_section_type = strdup(line);
-      is_section = 1;
-      printf("Section Type: [%s]\n\n", lhp_section_type);
-    }
-    return(is_section);
 }
 
 

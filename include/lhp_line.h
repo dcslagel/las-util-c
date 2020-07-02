@@ -7,8 +7,8 @@
  * License-Identifier: MIT
  */
 
-#ifndef LH_LINE_H
-#define LH_LINE_H
+#ifndef LHP_LINE_H
+#define LHP_LINE_H
 
 #include <stdio.h>
 
@@ -25,4 +25,4 @@ extern void lhp_line_init(struct LhpLine* lhpline);
 extern void lhp_line_config(struct LhpLine* lhpline);
 /* end public-functions */
 
-#endif /* LH_LINE_H */
+#endif /* LHP_LINE_H */

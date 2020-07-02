@@ -11,6 +11,7 @@
 #include <stdlib.h> // exit, EXIT_SUCCESS
 
 #include "lhp_test_parse.h"
+#include "lhp_test_section.h"
 
 
 int main(void)
@@ -18,7 +19,7 @@ int main(void)
   int passed = 0;
   int failed = 0;
 
-  // Test a line
+  // Parse tests
   if (test_parse_mnemonic()) {
     passed = passed + 1;
   } else {
@@ -50,6 +51,25 @@ int main(void)
   }
 
   if (test_parse_empty_desc()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  // Section tests
+  if (test_is_section()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  if (test_is_not_section()) {
+    passed = passed + 1;
+  } else {
+    failed = failed + 1;
+  }
+
+  if (test_sections()) {
     passed = passed + 1;
   } else {
     failed = failed + 1;

@@ -8,8 +8,8 @@
  */
 
 
-#ifndef LH_FILE_H
-#define LH_FILE_H
+#ifndef LHP_FILE_H
+#define LHP_FILE_H
 
 
 
@@ -24,4 +24,4 @@ struct LhpFile {
 extern void lhp_file_init(struct LhpFile* lhpfile, const char *lhp_filename);
 /* end public-functions */
 
-#endif /* LH_PARSE_H */
+#endif /* LHP_PARSE_H */
