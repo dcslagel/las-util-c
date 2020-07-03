@@ -7,12 +7,12 @@
  * License-Identifier: MIT
  */
 
-#ifndef PQ_PARSE_H
-#define PQ_PARSE_H
+#ifndef LHP_PARSE_H
+#define LHP_PARSE_H
 
 
 /* public-functions */
-void read_las_file(const char *lhp_filename);
+void parse_las_file(const char *lhp_filename);
 /* end public-functions */
 
-#endif /* PQ_PARSE_H */
+#endif /* LHP_PARSE_H */
