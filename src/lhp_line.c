@@ -16,10 +16,10 @@
 
 static void lhp_clean_eol(struct LhpLine* lhpline);
 
-// --------------------------------------------------------
+// ---------------------------------------------------------------------
 // API functions
-// --------------------------------------------------------
-// struct LhpLine* lhp_line_init(void) {
+// ---------------------------------------------------------------------
+
 void lhp_line_init(struct LhpLine* lhpline) {
   lhpline->size = 2048;
   lhpline->line = malloc(lhpline->size);
@@ -36,9 +36,11 @@ void lhp_line_config(struct LhpLine* lhpline) {
   }
 }
 
-// --------------------------------------------------------
-// Internal functions
-// --------------------------------------------------------
+
+// ---------------------------------------------------------------------
+// Support functions
+// ---------------------------------------------------------------------
+
 static void lhp_clean_eol(struct LhpLine* lhpline)
 {
     // Remove spaces and new-lines from the end of the line

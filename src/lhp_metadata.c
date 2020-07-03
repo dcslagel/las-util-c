@@ -43,6 +43,7 @@ static void parse_desc(struct field*, struct LhpLine*);
 //-------------------------------------------------------------------
 // API: public-functions
 //-------------------------------------------------------------------
+
 struct LhpMetadata* lhp_metadata_init(size_t filesize)
 {
   size_t arraysize = 0;
@@ -138,9 +139,11 @@ void parse_data_line(struct LhpMetadata* lhp_metadata, struct LhpLine* lhpline)
     free(tofree);
 }
 
-// --------------------------------------------------------
-// Internal functions
-// --------------------------------------------------------
+
+// ---------------------------------------------------------------------
+// Support functions
+// ---------------------------------------------------------------------
+
 static void parse_mnemonic_name(struct field* fld, struct LhpLine* lhpline)
 {
     while (lhpline->line[lhpline->idx] != '.') {

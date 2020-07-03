@@ -1,6 +1,6 @@
 /*
- * File-Name: lhp_test_parser.h
- * File-Desc: Header file for test parser functions for lh_parser
+ * File-Name: lhp_test_parse.h
+ * File-Desc: Header file for test parser functions for lhp_test_parse.c
  * App-Name: las-header-parser
  * Project-Name: Las-Header-Parser
  * Copyright: Copyright (c) 2020, DC Slagel

@@ -90,7 +90,3 @@ void display_sections(struct LhpSections* lhpsections)
   }
 }
 
-
-// --------------------------------------------------------
-// Internal functions
-// --------------------------------------------------------

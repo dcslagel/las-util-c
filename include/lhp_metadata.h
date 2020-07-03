@@ -1,6 +1,6 @@
 /*
  * File-Name: lhp_metadata.h
- * File-Desc: header file for metadata services in lh_parse
+ * File-Desc: header file for metadata services in lhp_metadata.c
  * App-Name: lh_parser
  * Project-Name: Las-Header-Parser
  * Copyright: Copyright (c) 2020, DC Slagel

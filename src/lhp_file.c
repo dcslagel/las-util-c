@@ -11,8 +11,8 @@
 #include <stdlib.h> // exit()
 #include <errno.h>
 
-#include <string.h> // strerror
-#include <sys/stat.h>
+#include <string.h>   // strerror()
+#include <sys/stat.h> // stat()
 #include <sys/types.h>
 
 

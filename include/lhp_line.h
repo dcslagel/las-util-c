@@ -1,6 +1,6 @@
 /*
  * File-Name: lhp_line.h
- * File-Desc: header file for line services in lh_parse
+ * File-Desc: header file for line services in lhp_line.c
  * App-Name: lh_parser
  * Project-Name: Las-Header-Parser
  * Copyright: Copyright (c) 2020, DC Slagel
