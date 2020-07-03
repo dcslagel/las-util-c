@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     char *file_to_parse = get_filename_arg();
     printf("filename: [%s]\n", file_to_parse);
 
-    read_las_file(file_to_parse);
+    parse_las_file(file_to_parse);
     
     release_arg_memory();
 
