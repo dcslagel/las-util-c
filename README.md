@@ -1,7 +1,7 @@
 
 NAME
 ----
-Las-Header-Parser - A Log Ascii Standard 3.0 header meta-data parser in C
+Las-Util-C - A Log Ascii Standard 3.0 parser in C
 
 TABLE-OF-CONTENTS
 -----------------
@@ -44,11 +44,11 @@ https://www.cwls.org/products/
 [COMPILE-AND-RUN](#name)
 ---------------
 
-Las-Header-Parser has been tested with gcc-9 and clang on darwin-amd64.
+Las-Util-C has been tested with gcc-9 and clang on darwin-amd64.
 
 
 ```bash
-cd las-header-parser/src
+cd las-util-c/src
 make clean
 make
 make install
@@ -94,24 +94,24 @@ Description: [ First Index Value]
 ------------
 The current work-in-progress milestone is 0.0.4:
 
-https://github.com/dcslagel/las-header-parser-c/milestone/6
+https://github.com/dcslagel/las-util-c/milestone/6
 - Goals:
   - Inital iteration of parsing related Parameter and Data sections
 
 las-parser-c's project road-map is managed in github milestones at:
 
-https://github.com/dcslagel/las-header-parser-c/milestones
+https://github.com/dcslagel/las-util-c/milestones
 
 To request a feature or report a bug create an issue at:
 
-https://github.com/dcslagel/las-header-parser-c/issues
+https://github.com/dcslagel/las-util-c/issues
 
 
 [FEATURE-REQUEST](#name)
 ----------------
 
 To request and discuss a potiential feature create an issue at:
-  - https://github.com/dcslagel/las-header-parser-c/issues
+  - https://github.com/dcslagel/las-util-c/issues
 
 
 [BUGS](#name)
@@ -122,7 +122,7 @@ To request and discuss a potiential feature create an issue at:
   future iterations.
 
 - Report bugs by creating an issue at:
-  - https://github.com/dcslagel/las-header-parser-c/issues
+  - https://github.com/dcslagel/las-util-c/issues
 
 [COPYRIGHT](#name)
 ------
